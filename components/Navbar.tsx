@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useCart } from "./CartContext";
+import { useCart } from "@/lib/CartContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);

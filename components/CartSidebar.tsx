@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "./CartContext";
+import { useCart } from "@/lib/CartContext";
 
 export default function CartSidebar() {
   const { items, removeItem, updateQuantity, total, count, isOpen, closeCart } = useCart();
