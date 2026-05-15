@@ -1,8 +1,8 @@
 "use client";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/lib/products";
+import { Product } from "@/backend/types";
 
-export default function ProductGrid() {
+export default function ProductGrid({ products }: { products: Product[] }) {
   return (
     <section className="max-w-7xl mx-auto px-6 lg:px-12 py-20">
       <div className="flex items-end justify-between mb-10">

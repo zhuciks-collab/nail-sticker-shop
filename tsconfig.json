@@ -37,6 +37,9 @@
   ],
   "exclude": [
     "node_modules",
-    "mnt"
+    "mnt",
+    "backend/queries.orders.ts",
+    "backend/schema.sql",
+    "backend/functions.sql"
   ]
 }

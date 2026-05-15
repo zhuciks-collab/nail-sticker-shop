@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
 
-interface Props { params: { slug: string } }
+interface Props { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
   const slugs = await getAllProductSlugs();
@@ -11,14 +11,16 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props) {
-  const p = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const p = await getProductBySlug(slug);
   return { title: `${p?.name ?? "Product"} — NAILZ.CLUB 💅` };
 }
 
 export default async function ProductPage({ params }: Props) {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
-  const related = await getRelatedProducts(params.slug, product.collection);
+  const related = await getRelatedProducts(slug, product.collection);
 
   return (
     <div className="pt-16">
