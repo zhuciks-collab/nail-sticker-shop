@@ -1,19 +1,24 @@
-import { products } from "@/lib/products";
+import { getProductBySlug, getRelatedProducts, getAllProductSlugs } from "@/backend/queries.products";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
 
 interface Props { params: { slug: string } }
-export function generateStaticParams() { return products.map(p => ({ slug: p.id })); }
-export function generateMetadata({ params }: Props) {
-  const p = products.find(p => p.id === params.slug);
+
+export async function generateStaticParams() {
+  const slugs = await getAllProductSlugs();
+  return slugs.map(slug => ({ slug }));
+}
+
+export async function generateMetadata({ params }: Props) {
+  const p = await getProductBySlug(params.slug);
   return { title: `${p?.name ?? "Product"} — NAILZ.CLUB 💅` };
 }
 
-export default function ProductPage({ params }: Props) {
-  const product = products.find(p => p.id === params.slug);
+export default async function ProductPage({ params }: Props) {
+  const product = await getProductBySlug(params.slug);
   if (!product) notFound();
-  const related = products.filter(p => p.id !== product.id).slice(0, 4);
+  const related = await getRelatedProducts(params.slug, product.collection);
 
   return (
     <div className="pt-16">
@@ -28,7 +33,7 @@ export default function ProductPage({ params }: Props) {
 
         <div className="grid lg:grid-cols-2 gap-14 items-start">
           {/* Image */}
-          <div className={`aspect-square bg-gradient-to-br ${product.bg} rounded-3xl border-2 border-ink shadow-[6px_6px_0_#1A0A2E] flex items-center justify-center overflow-hidden relative`}>
+          <div className={`aspect-square bg-gradient-to-br ${product.bg ?? ""} rounded-3xl border-2 border-ink shadow-[6px_6px_0_#1A0A2E] flex items-center justify-center overflow-hidden relative`}>
             <span className="text-[120px]">{product.emoji}</span>
             {product.badge && (
               <span className="absolute top-5 left-5 pill bg-bubblegum text-white border border-white/20 text-xs font-bold">{product.badge}</span>
@@ -52,7 +57,7 @@ export default function ProductPage({ params }: Props) {
               {product.originalPrice && <span className="text-lg text-mid/40 line-through">£{product.originalPrice.toFixed(2)}</span>}
             </div>
             <p className="text-mid text-base leading-relaxed mb-8 bg-lemon/20 rounded-2xl p-4 border-l-4 border-lemon font-light">
-              {product.desc}
+              {product.description}
             </p>
 
             {/* Colors */}

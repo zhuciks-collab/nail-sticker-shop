@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/lib/products";
+import { getProducts } from "@/backend/queries.products";
 
 // Editorial SVG hero image placeholder
 function HeroImage() {
@@ -168,8 +168,8 @@ function InstaImage({ index }: { index: number }) {
   );
 }
 
-export default function HomePage() {
-  const featured = products.slice(0, 4);
+export default async function HomePage() {
+  const featured = await getProducts({ limit: 4 });
 
   return (
     <>

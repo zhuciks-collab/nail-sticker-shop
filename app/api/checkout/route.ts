@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { products } from "@/lib/products";
+import { getProductBySlug } from "@/backend/queries.products";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-06-20",
 });
 
 interface CartItemPayload {
-  productId: string;
+  productId: string; // slug, e.g. "midnight-marble"
   quantity: number;
 }
 
@@ -19,11 +19,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    // Build line items using server-side product data — never trust client prices
+    // Build Stripe line items using server-side Sanity data — never trust client prices
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
     for (const { productId, quantity } of body.items) {
-      const product = products.find((p) => p.id === productId);
+      // productId is the slug
+      const product = await getProductBySlug(productId);
 
       if (!product) {
         return NextResponse.json(
@@ -43,10 +44,11 @@ export async function POST(req: NextRequest) {
         quantity,
         price_data: {
           currency: "gbp",
-          unit_amount: Math.round(product.price * 100), // pence
+          unit_amount: Math.round(product.price * 100), // convert £ to pence
           product_data: {
             name: product.name,
-            description: product.desc,
+            description: product.description ?? undefined,
+            ...(product.image ? { images: [product.image] } : {}),
             metadata: { productId: product.id },
           },
         },

@@ -1,9 +1,10 @@
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/lib/products";
+import { getProducts } from "@/backend/queries.products";
 
 export const metadata = { title: "Shop All — NAILZ.CLUB 💅" };
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const products = await getProducts();
   return (
     <div className="pt-16">
       {/* Header */}

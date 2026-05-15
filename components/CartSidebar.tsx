@@ -108,7 +108,7 @@ export default function CartSidebar() {
                       >
                         {/* Swatch */}
                         <div
-                          className={`w-16 h-16 rounded-xl border-2 border-ink flex items-center justify-center text-2xl shrink-0 bg-gradient-to-br ${product.bg}`}
+                          className={`w-16 h-16 rounded-xl border-2 border-ink flex items-center justify-center text-2xl shrink-0 bg-gradient-to-br ${product.bg ?? ""}`}
                         >
                           {product.emoji}
                         </div>

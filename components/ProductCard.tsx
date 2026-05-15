@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { Product } from "@/lib/products";
+import Image from "next/image";
+import { Product } from "@/backend/types";
 
 function NailArt({ product }: { product: Product }) {
   const [c1,c2,c3] = product.colors;
@@ -40,8 +41,17 @@ export default function ProductCard({ product, index=0 }: { product: Product; in
     <div className="card-lift group" style={{ animationDelay: `${index * 60}ms` }}>
       <Link href={`/shop/${product.id}`} className="block">
         {/* Image */}
-        <div className={`aspect-[3/4] bg-gradient-to-br ${product.bg} overflow-hidden relative rounded-2xl border-2 border-ink`}>
-          <NailArt product={product} />
+        <div className={`aspect-[3/4] bg-gradient-to-br ${product.bg ?? ""} overflow-hidden relative rounded-2xl border-2 border-ink`}>
+          {product.image ? (
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <NailArt product={product} />
+          )}
           {product.badge && (
             <span className={`absolute top-3 left-3 pill text-[10px] font-bold border border-black/10 ${badgeColors[product.badge] ?? "bg-white text-ink"}`}>
               {product.badge}
@@ -66,7 +76,7 @@ export default function ProductCard({ product, index=0 }: { product: Product; in
           <h3 className="font-display font-700 text-base text-ink group-hover:text-bubblegum transition-colors leading-tight">
             {product.name}
           </h3>
-          <p className="text-xs text-mid/50 mt-1 line-clamp-1 font-light">{product.desc}</p>
+          <p className="text-xs text-mid/50 mt-1 line-clamp-1 font-light">{product.description ?? ""}</p>
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2">
               <span className="font-display font-700 text-base text-ink">£{product.price.toFixed(2)}</span>
